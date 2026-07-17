@@ -1,0 +1,23 @@
+name: Probar Screper de RunRepeat
+on:
+ workflow_dispatch:
+
+jobs:
+  ejecutar-screper:
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: Descargar repositorio
+       uses: actions/checkout@v4
+     - name: Configurar Python
+       uses: actions/setup-python@v5
+       with:
+         python-version: '3.12'
+
+     - name: Instalar dependencias
+       run: |
+        pip install requests beautifulsoup4
+
+     - name: Ejecutar scraper
+       run: |
+        python runrepeat_scraper.py
