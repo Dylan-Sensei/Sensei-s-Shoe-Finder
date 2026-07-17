@@ -1,4 +1,4 @@
-name: Probar Screper de RunRepeat
+name: Probar Scraper de RunRepeat
 on:
  workflow_dispatch:
 
