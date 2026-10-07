@@ -12,7 +12,22 @@ print("Título:", soup.title.text)
 
 links = soup.find_all("a", href=True)
 
-print("total de enlaces encontrados:", len(links))
+modelos = {}
+
 
 for link in links:
-  print(link.get_text(strip=True), "->", link["href"])
+  nombre = link.get_text(strip=True)
+  href = link{"href"]
+
+  # Solo enlaces internos de RunRepeat
+  # Excluimos páginas de catálogo
+  if (
+    nombre
+    and href.startswith("/es/")
+    and "/catalogo/" not in href
+  ):
+    modelos[href] = nombre
+  
+print("Modelos encontrados:", len(modelos))
+for href, nombre in modelos.items():
+  print(nombre, "->", href)
