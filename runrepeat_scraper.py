@@ -32,29 +32,28 @@ for pagina in range(1, 4):
    print(f"\nAnalizando página {pagina}...")
 
 
-response = requests.get(url)
+   response = requests.get(url)
 
-soup = BeautifulSoup(response.text, "html.parser")
-links = soup.find_all("a", href=True)
-
-print("Página descargada")
-print("Título:", soup.title.text)
-
-
+   soup = BeautifulSoup(response.text, "html.parser")
+   print("URL final:", response.url)
+   print("Código:", response.status_code)
+   print("Título:", soup.title.text)
+   links = soup.find_all("a", href=True)
 
 
-for link in links:
-  nombre = link.get_text(strip=True)
-  href = link["href"]
+
+   for link in links:
+     nombre = link.get_text(strip=True)
+     href = link["href"]
 
   # Solo enlaces internos de RunRepeat
   # Extraemos solo links que tengan nombres de modelos y marcas de tenis
-  if (
-    nombre
-    and href.startswith("/es/")
-    and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
-  ):
-    modelos[href] = nombre
+     if (
+       nombre
+         and href.startswith("/es/")
+       and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
+     ):
+       modelos[href] = nombre
   
 print("\n Total de Modelos encontrados:", len(modelos))
 
