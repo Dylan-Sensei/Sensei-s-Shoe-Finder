@@ -3,15 +3,6 @@ from bs4 import BeautifulSoup
 
 url = "https://runrepeat.com/es/catalogo/zapatillas-de-running-new"
 
-response = requests.get(url)
-print("Código de respuesta:", response.status_code)
-
-soup = BeautifulSoup(response.text, "html.parser")
-print("Página descargada")
-print("Título:", soup.title.text)
-
-links = soup.find_all("a", href=True)
-
 marcas = [
    "HOKA",
     "ASICS",
@@ -34,6 +25,23 @@ marcas = [
 
 modelos = {}
 
+#Recorrer páginas 1 2 y 3
+
+for pagina in range(1, 4):
+   url = f"{url_base}?page={pagina}"
+   print(f"\nAnalizando página {pagina}...")
+
+
+response = requests.get(url)
+
+soup = BeautifulSoup(response.text, "html.parser")
+links = soup.find_all("a", href=True)
+
+print("Página descargada")
+print("Título:", soup.title.text)
+
+
+
 
 for link in links:
   nombre = link.get_text(strip=True)
@@ -48,7 +56,7 @@ for link in links:
   ):
     modelos[href] = nombre
   
-print("Modelos encontrados:", len(modelos))
+print("\n Total de Modelos encontrados:", len(modelos))
 
 for href, nombre in modelos.items():
   print(nombre, "->", href)
