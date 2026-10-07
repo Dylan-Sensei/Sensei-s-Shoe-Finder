@@ -78,4 +78,24 @@ print("Título:", soup_modelo.title.text)
 
 texto = soup_modelo.get_text(" ", strip=True)
 
-print(texto[:3000])
+palabras_clave = [
+   "Peso",
+    "Drop",
+    "Absorción",
+    "Retorno",
+    "Estabilidad",
+    "Rigidez",
+    "Anchura",
+    "Altura",
+    "Suela",
+    "Técnica de carrera",
+    "Placa",
+    "Rocker",
+    "Prnación"
+]
+
+for palabra in palabras_clave:
+   posicion = texto.lower().finde(palabra.lower())
+   if posicion != -1:
+      print(f"\n --- {palabra} ---")
+      print(texto[psocion:posicion + 500])
