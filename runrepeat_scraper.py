@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-url = "https://runrepeat.com/es/catalogo/zapatillas-de-running-new"
+url_base = "https://runrepeat.com/es/catalogo/zapatillas-de-running-new"
 
 marcas = [
    "HOKA",
