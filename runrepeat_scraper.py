@@ -98,4 +98,4 @@ for palabra in palabras_clave:
    posicion = texto.lower().find(palabra.lower())
    if posicion != -1:
       print(f"\n --- {palabra} ---")
-      print(texto[psocion:posicion + 500])
+      print(texto[posicion:posicion + 500])
