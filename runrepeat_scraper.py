@@ -52,9 +52,9 @@ while True:
      if (
        nombre
          and href.startswith("/es/")
-       and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
+         and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
      ):
-       modelos[href] = nombre
+         modelos[href] = nombre
 modelos_nuevos = len(modelos) - modelos_antes  
 print("\n Modelos nuevos:", modelos_nuevos)
 
