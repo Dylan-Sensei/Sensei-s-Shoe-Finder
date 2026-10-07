@@ -14,5 +14,5 @@ links = soup.find_all("a", href=True)
 
 print("total de enlaces encontrados:", len(links))
 
-for link in links[:30]:
+for link in links:
   print(link.get_text(strip=True), "->", link["href"])
