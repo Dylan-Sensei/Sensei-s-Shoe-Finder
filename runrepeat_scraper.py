@@ -12,6 +12,26 @@ print("Título:", soup.title.text)
 
 links = soup.find_all("a", href=True)
 
+marcas = [
+   "HOKA",
+    "ASICS",
+    "New Balance",
+    "Brooks",
+    "Altra",
+    "PUMA",
+    "adidas",
+    "On",
+    "Saucony",
+    "Skechers",
+    "Mount to Coast",
+    "Topo",
+    "Vivobarefoot",
+    "Nike",
+    "La Sportiva",
+    "Salomon",
+    "Merrell
+]
+
 modelos = {}
 
 
@@ -20,14 +40,15 @@ for link in links:
   href = link["href"]
 
   # Solo enlaces internos de RunRepeat
-  # Excluimos páginas de catálogo
+  # Extraemos solo links que tengan nombres de modelos y marcas de tenis
   if (
     nombre
     and href.startswith("/es/")
-    and "/catalogo/" not in href
+    and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
   ):
     modelos[href] = nombre
   
 print("Modelos encontrados:", len(modelos))
+
 for href, nombre in modelos.items():
   print(nombre, "->", href)
