@@ -51,18 +51,18 @@ while True:
   # Extraemos solo links que tengan nombres de modelos y marcas de tenis
      if (
        nombre
-         and href.startswith("/es/")
-         and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
+       and href.startswith("/es/")
+       and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
      ):
-         modelos[href] = nombre
-modelos_nuevos = len(modelos) - modelos_antes  
-print("\n Modelos nuevos:", modelos_nuevos)
+       modelos[href] = nombre
+   modelos_nuevos = len(modelos) - modelos_antes  
+   print("\n Modelos nuevos:", modelos_nuevos)
 
 #Si no hay modelos nuevos, detener el scrapper
-if modelos_nuevos == 0:
-   print("No hay más modelos nuevos")
-   break
-pagina += 1
+   if modelos_nuevos == 0:
+      print("No hay más modelos nuevos")
+      break
+   pagina += 1
 
 print("\n Total de Modelos encontrados:", len(modelos))
 for href, nombre in modelos.items():
