@@ -25,9 +25,10 @@ marcas = [
 
 modelos = {}
 
-#Recorrer páginas 1 2 y 3
+#Recorrer páginas indefinidamente
+pagina = 1
+while True:
 
-for pagina in range(1, 4):
    url = f"{url_base}?page={pagina}"
    print(f"\nAnalizando página {pagina}...")
 
@@ -37,10 +38,10 @@ for pagina in range(1, 4):
    soup = BeautifulSoup(response.text, "html.parser")
    print("URL final:", response.url)
    print("Código:", response.status_code)
-   print("Título:", soup.title.text)
+  
    links = soup.find_all("a", href=True)
 
-
+   modelos_antes = len(modelos)
 
    for link in links:
      nombre = link.get_text(strip=True)
@@ -54,8 +55,15 @@ for pagina in range(1, 4):
        and any(nombre.lower().startswith(marca.lower()) for marca in marcas)
      ):
        modelos[href] = nombre
-  
-print("\n Total de Modelos encontrados:", len(modelos))
+modelos_nuevos = len(modelos) - modelos_antes  
+print("\n Modelos nuevos:", modelos_nuevos)
 
+#Si no hay modelos nuevos, detener el scrapper
+if modelos_nuevos == 0:
+   print("No hay más modelos nuevos")
+   break
+pagina += 1
+
+print("\n Total de Modelos encontrados:", len(modelos))
 for href, nombre in modelos.items():
   print(nombre, "->", href)
