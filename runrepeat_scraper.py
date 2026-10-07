@@ -95,7 +95,7 @@ palabras_clave = [
 ]
 
 for palabra in palabras_clave:
-   posicion = texto.lower().finde(palabra.lower())
+   posicion = texto.lower().find(palabra.lower())
    if posicion != -1:
       print(f"\n --- {palabra} ---")
       print(texto[psocion:posicion + 500])
