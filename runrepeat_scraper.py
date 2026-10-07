@@ -67,3 +67,15 @@ while True:
 print("\n Total de Modelos encontrados:", len(modelos))
 for href, nombre in modelos.items():
   print(nombre, "->", href)
+
+modelo_url = "https://runrepeat.com/es/hoka-speedgoat-7"
+response_modelo = requests.get(modelo_url)
+soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
+
+print("\n--- PRUEBA MODELO INDIVIDUAL ---")
+print("Código:", response_modelo.status_code)
+print("Título:", soup_modelo.title.text)
+
+texto = soup_modelo.get_text(" ", strip=True)
+
+print(texto[:3000])
