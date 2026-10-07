@@ -17,7 +17,7 @@ modelos = {}
 
 for link in links:
   nombre = link.get_text(strip=True)
-  href = link{"href"]
+  href = link["href"]
 
   # Solo enlaces internos de RunRepeat
   # Excluimos páginas de catálogo
