@@ -29,7 +29,7 @@ marcas = [
     "Nike",
     "La Sportiva",
     "Salomon",
-    "Merrell
+    "Merrell"
 ]
 
 modelos = {}
