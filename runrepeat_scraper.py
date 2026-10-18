@@ -75,29 +75,30 @@ soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
 print("\n--- HOKA SPEEDGOAT 7 ---")
 print("Código:", response_modelo.status_code)
 
-# Función para buscar una característica
-def buscar_dato(etiqueta):
-   elemento = soup_modelo.find(
-      string=lambda texto:texto and etiqueta.lower() in texto.lower()
-   )
-   if elemento:
-      padre = elemento.parent
+# Función para buscar una característicafilas = soup_modelo.find_all("tr")
+print("\nTotal de filas HTML:", len(filas))
 
-      print(f"\n --- {etiqueta} ---")
-      print(padre.parent.get_text(" ",strip=True)[:500])
-   else:
-      print(f"\n---{etiqueta} ---")
-      print("No Encontrado")
+palabras_clave = [
+    "Peso",
+    "Drop",
+    "Absorción de impactos en el talón",
+    "Retorno de energía en el talón",
+    "Pronación",
+    "Placa",
+    "rocker"
+]
 
+for fila in filas:
 
-buscar_dato("Peso")
-buscar_dato("Drop")
-buscar_dato("Absorción")
-buscar_dato("Retorno")
-buscar_dato("Estabilidad")
-buscar_dato("Rigidez")
-buscar_dato("Técnica de carrera")
-buscar_dato("Placa")
-buscar_dato("Rocker")
-buscar_dato("Pronación")
+    celdas = fila.find_all(["th", "td"])
 
+    valores = [
+        celda.get_text(" ", strip=True)
+        for celda in celdas
+    ]
+
+    if valores and any(
+       palabra.lower() in vaores[0].lower()
+       for palabra in palabra_clave
+    ):
+       print("\nFila encontrada:", valores)
