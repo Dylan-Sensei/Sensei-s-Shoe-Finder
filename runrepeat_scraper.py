@@ -68,11 +68,11 @@ print("\n Total de Modelos encontrados:", len(modelos))
 for href, nombre in modelos.items():
   print(nombre, "->", href)
 
-modelo_url = "https://runrepeat.com/es/hoka-speedgoat-7"
+modelo_url = "https://runrepeat.com/es/nike-zoom-fly-6"
 response_modelo = requests.get(modelo_url)
 soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
 
-print("\n--- HOKA SPEEDGOAT 7 ---")
+print("\n--- NIKE ZOOM FLY 6 ---")
 print("Código:", response_modelo.status_code)
 
 # Función para buscar una característicafilas = soup_modelo.find_all("tr")
@@ -89,6 +89,25 @@ palabras_clave = [
     "rocker"
 ]
 
+def clasificar_placa(valor):
+
+    valor = valor.lower().strip()
+
+    if "carbono" in valor or "carbon" in valor:
+        return "CARBONO", 1
+
+    elif "rock plate" in valor or "rockplate" in valor:
+        return "ROCK PLATE", 0
+
+    elif "nylon" in valor or "tpu" in valor:
+        return "OTRA PLACA", 0
+
+    elif valor in ["x", "✗", "✕", "no", "sin placa"]:
+        return "SIN PLACA", 0
+
+    else:
+        return "NO IDENTIFICADO", None
+
 for fila in filas:
 
     celdas = fila.find_all(["th", "td"])
@@ -103,3 +122,30 @@ for fila in filas:
        for palabra in palabras_clave
     ):
        print("\nFila encontrada:", valores)
+       
+print("\n--- PLACA Y ROCKER---")
+for fila in soup_modelo.find_all("tr"):
+   celdas=fila.find_all(["th","td"])
+   valores=[
+      celda.get_text(" ",strip=True)
+      for celda in celdas
+   ]
+   if len(valores) >=2:
+      etiqueta=valores[0].lower().strip()
+      if etiqueta == "placa":
+         tipo_placa, placa_carbono = clasificar+placa(valores[1])
+          print("Tipo de placa::", tipo_placa)
+          print("Placa de carbono:",placa_carbono)
+      elif eiqueta =="con rocker":
+          valor_rocker = valores[1].lower().strip()
+
+          if valor_rocker in ["✓", "✔", "sí", "si"]:
+             rocker = 1
+
+          elif valor_rocker in ["x", "✗", "✕", "no"]:
+             rocker = 0
+
+          else:
+             rocker = None
+
+          print("Rocker:", rocker)
