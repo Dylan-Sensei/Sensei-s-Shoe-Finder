@@ -72,30 +72,32 @@ modelo_url = "https://runrepeat.com/es/hoka-speedgoat-7"
 response_modelo = requests.get(modelo_url)
 soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
 
-print("\n--- PRUEBA MODELO INDIVIDUAL ---")
+print("\n--- HOKA SPEEDGOAT 7 ---")
 print("Código:", response_modelo.status_code)
-print("Título:", soup_modelo.title.text)
 
-texto = soup_modelo.get_text(" ", strip=True)
+# Función para buscar una característica
+def buscar_dato(etiqueta):
+   elemento = soup_modelo.find(
+      string=lambda texto:texto and etiqueta.lower() in texto.lower()
+   )
+   if elemento:
+      padre = elemento.parent
 
-palabras_clave = [
-   "Peso",
-    "Drop",
-    "Absorción",
-    "Retorno",
-    "Estabilidad",
-    "Rigidez",
-    "Anchura",
-    "Altura",
-    "Suela",
-    "Técnica de carrera",
-    "Placa",
-    "Rocker",
-    "Prnación"
-]
+      print(f"\n --- {etiqueta} ---")
+      print(padre.parent.get_text(" ",strip=True)[:500])
+   else:
+      print(f"\n---{etiqueta} ---")
+      print("No Encontrado")
 
-for palabra in palabras_clave:
-   posicion = texto.lower().find(palabra.lower())
-   if posicion != -1:
-      print(f"\n --- {palabra} ---")
-      print(texto[posicion:posicion + 500])
+
+buscar_dato("Peso")
+buscar_dato("Drop")
+buscar_dato("Absorción")
+buscar_dato("Retorno")
+buscar_dato("Estabilidad")
+buscar_dato("Rigidez")
+buscar_dato("Técnica de carrera")
+buscar_dato("Placa")
+buscar_dato("Rocker")
+buscar_dato("Pronación")
+
