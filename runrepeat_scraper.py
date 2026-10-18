@@ -76,6 +76,7 @@ print("\n--- HOKA SPEEDGOAT 7 ---")
 print("Código:", response_modelo.status_code)
 
 # Función para buscar una característicafilas = soup_modelo.find_all("tr")
+filas = soup_modelo.find_all("tr")
 print("\nTotal de filas HTML:", len(filas))
 
 palabras_clave = [
