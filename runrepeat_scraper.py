@@ -83,7 +83,7 @@ palabras_clave = [
     "Peso",
     "Drop",
     "Absorción de impactos en el talón",
-    "Retorno de energía en el talón",
+    "Retorno de energía",
     "Pronación",
     "Placa",
     "rocker"
