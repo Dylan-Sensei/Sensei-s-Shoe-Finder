@@ -134,7 +134,7 @@ for fila in soup_modelo.find_all("tr"):
       etiqueta=valores[0].lower().strip()
       if etiqueta == "placa":
          tipo_placa, placa_carbono = clasificar+placa(valores[1])
-          print("Tipo de placa::", tipo_placa)
+          print("Tipo de placa:", tipo_placa)
           print("Placa de carbono:",placa_carbono)
       elif eiqueta =="con rocker":
           valor_rocker = valores[1].lower().strip()
