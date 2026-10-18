@@ -100,6 +100,6 @@ for fila in filas:
 
     if valores and any(
        palabra.lower() in vaores[0].lower()
-       for palabra in palabra_clave
+       for palabra in palabras_clave
     ):
        print("\nFila encontrada:", valores)
