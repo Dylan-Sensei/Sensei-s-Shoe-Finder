@@ -69,40 +69,14 @@ print("\n Total de Modelos encontrados:", len(modelos))
 for href, nombre in modelos.items():
   print(nombre, "->", href)
 
-modelo_url = "https://runrepeat.com/es/nike-zoom-fly-6"
-response_modelo = requests.get(modelo_url)
-soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
-
-print("\n--- NIKE ZOOM FLY 6 ---")
-print("Código:", response_modelo.status_code)
-
-# Función para buscar una característica
-filas = soup_modelo.find_all("tr")
-print("\nTotal de filas HTML:", len(filas))
-
 import re
-# Creamos un diccionario del Modelo para recuperar las metricas de los tenis en un formato extraible para Sheets
+import time
 
-datos_modelo = {
-   "modelo": "Nike Zoom Fly 6",
-   "url":modelo_url,
-   "peso_lab_g": None,
-   "peso_marca_g": None,
-   "drop_lab_mm": None,
-   "drop_marca_mm": None,
-   "absorcion_talon_sa": None,
-   "retorno_antepie_pct": None,
-   "tipo_placa": None,
-   "placa_carbono": None,
-   "rocker": None,
-   "pronacion": None
-}
-def extraer_numero(texto,patron):
-   coincidencia = re.search(patron,texto,re.IGNORECASE)
+def extraer_numero(texto, patron):
+   coincidencia = re.search(patron, texto, re.IGNORECASE)
    if coincidencia:
       return float(coincidencia.group(1).replace(",","."))
    return None
-
 def clasificar_placa(valor):
 
     valor = valor.lower().strip()
@@ -122,14 +96,36 @@ def clasificar_placa(valor):
     else:
         return "NO IDENTIFICADO", None
 
-for fila in filas:
+#Funcion principal de Extraccion
 
-    celdas = fila.find_all(["th", "td"])
+def extraer_datos_modelo(url, nombre):
+   print(f"\nAnalizando modelo: {nombre}")
+   response = requests.get(url,timeout=20)
+   response.raise_for_status()
+   soup_modelo = BeautifulSoup(response.text,"html.parser")
+   filas = soup_modelo.find_all("tr")
 
-    valores = [
+   datos_modelo = {
+      "modelo": nombre,
+      "url":url,
+      "peso_lab_g": None,
+      "peso_marca_g": None,
+      "drop_lab_mm": None,
+      "drop_marca_mm": None,
+      "absorcion_talon_sa": None,
+      "retorno_antepie_pct": None,
+      "tipo_placa": None,
+      "placa_carbono": None,
+      "rocker": None,
+      "pronacion": None
+   }
+
+   for fila in filas:
+      celdas = fila.find_all(["th", "td"])
+      valores = [
         celda.get_text(" ", strip=True)
         for celda in celdas
-    ]
+      ]
 
     if len(valores) <2:
        continue
@@ -138,7 +134,7 @@ for fila in filas:
 
     # Peso de laboratorio
     if etiqueta == "peso":
-       peso = extraer_numero(valor, r"\((\d+(?:[.,]\d+)?)\s*g\)")
+       peso = extraer_numero(valor, r"\((\d+(?:[.,]\d+)?)\s*g\b)")
        if peso is not None:
            datos_modelo["peso_lab_g"] = peso
 
@@ -185,13 +181,46 @@ for fila in filas:
        elif valor.lower().strip() in ["x", "✗", "✕", "no"]:
            datos_modelo["rocker"] = 0
 
+   return datos_modelo
 
-# ==========================================
-# MOSTRAR RESULTADO
-# ==========================================
 
-print("\n--- DATOS DEL MODELO ---")
+modelos_prueba = [
+    ("Nike Zoom Fly 6", "/es/nike-zoom-fly-6"),
+    ("HOKA Speedgoat 7", "/es/hoka-speedgoat-7"),
+    ("ASICS Novablast 6", "/es/asics-novablast-6"),
+    ("Salomon Ultra Glide 4", "/es/salomon-ultra-glide-4"),
+    ("adidas Adizero Adios Pro 4", "/es/adidas-adizero-adios-pro-4")
+]
+resultados = []
+for nombre, href in modelos_prueba:
 
-for campo, valor in datos_modelo.items():
-    print(f"{campo}: {valor}")
-       
+    url = "https://runrepeat.com" + href
+
+    try:
+        datos = extraer_datos_modelo(url, nombre)
+        resultados.append(datos)
+
+        print("\n--- DATOS EXTRAÍDOS ---")
+        for campo, valor in datos.items():
+            print(f"{campo}: {valor}")
+
+    except requests.RequestException as error:
+        print(f"Error al consultar {nombre}: {error}")
+
+    time.sleep(2)
+
+print("\n--- RESUMEN DE EXTRACCIÓN ---")
+print("Modelos procesados:", len(resultados))
+
+for datos in resultados:
+    campos_faltantes = [
+        campo for campo, valor in datos.items()
+        if valor is None
+    ]
+
+    print(
+        datos["modelo"],
+        "| Campos faltantes:",
+        campos_faltantes
+    )
+
