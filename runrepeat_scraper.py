@@ -127,54 +127,54 @@ def extraer_datos_modelo(url, nombre):
         for celda in celdas
       ]
 
-    if len(valores) <2:
+      if len(valores) <2:
        continue
-    etiqueta=valores[0].lower().strip()
-    valor=valores[1]
+      etiqueta=valores[0].lower().strip()
+      valor=valores[1]
 
-    # Peso de laboratorio
-    if etiqueta == "peso":
-       peso = extraer_numero(valor, r"\((\d+(?:[.,]\d+)?)\s*g\b)")
+      # Peso de laboratorio
+      if etiqueta == "peso":
+       peso = extraer_numero(valor, r"\((\d+(?:[.,]\d+)?)\s*g\b")
        if peso is not None:
            datos_modelo["peso_lab_g"] = peso
 
-    # Peso del fabricante
-    elif etiqueta == "peso:":
+      # Peso del fabricante
+      elif etiqueta == "peso:":
        datos_modelo["peso_marca_g"] = extraer_numero(
            valor, r"hombre:\s*[\d.,]+\s*oz\s*/\s*(\d+(?:[.,]\d+)?)\s*g"
        )
 
-    # Drop de laboratorio
-    elif etiqueta == "drop":
+      # Drop de laboratorio
+      elif etiqueta == "drop":
        datos_modelo["drop_lab_mm"] = extraer_numero(
            valor, r"(\d+(?:[.,]\d+)?)\s*mm"
        )
-    # Drop del fabricante
-    elif etiqueta == "drop:":
+      # Drop del fabricante
+      elif etiqueta == "drop:":
        datos_modelo["drop_marca_mm"] = extraer_numero(
            valor, r"(\d+(?:[.,]\d+)?)\s*mm"
        )
-    # Absorción de impactos
-    elif etiqueta == "absorción de impactos en el talón":
+      # Absorción de impactos
+      elif etiqueta == "absorción de impactos en el talón":
        datos_modelo["absorcion_talon_sa"] = extraer_numero(
            valor, r"(\d+(?:[.,]\d+)?)\s*SA"
        )
-    # Retorno de energía
-    elif etiqueta == "retorno de energía en el antepié":
+      # Retorno de energía
+      elif etiqueta == "retorno de energía en el antepié":
        datos_modelo["retorno_antepie_pct"] = extraer_numero(
            valor, r"(\d+(?:[.,]\d+)?)\s*%"
        )
-    # Pronación
-    elif etiqueta == "pronación:":
+      # Pronación
+      elif etiqueta == "pronación:":
        datos_modelo["pronacion"] = valor
-    # Placa
-    elif etiqueta == "placa":
+      # Placa
+      elif etiqueta == "placa":
        tipo_placa, placa_carbono = clasificar_placa(valor)
        datos_modelo["tipo_placa"] = tipo_placa
        datos_modelo["placa_carbono"] = placa_carbono
 
-    # Rocker
-    elif etiqueta == "con rocker":
+      # Rocker
+      elif etiqueta == "con rocker":
        if valor.lower().strip() in ["✓", "✔", "sí", "si"]:
            datos_modelo["rocker"] = 1
 
