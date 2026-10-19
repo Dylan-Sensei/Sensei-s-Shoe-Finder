@@ -1,8 +1,9 @@
+#Importamos las librerias
 import requests
 from bs4 import BeautifulSoup
-
+#esta es la pagina de base de datos para el scrapper
 url_base = "https://runrepeat.com/es/catalogo/zapatillas-de-running-new"
-
+#determinamos que marcasd e tenis queremos recuperar de RUNREPEAT
 marcas = [
    "HOKA",
     "ASICS",
@@ -75,19 +76,32 @@ soup_modelo = BeautifulSoup(response_modelo.text, "html.parser")
 print("\n--- NIKE ZOOM FLY 6 ---")
 print("Código:", response_modelo.status_code)
 
-# Función para buscar una característicafilas = soup_modelo.find_all("tr")
+# Función para buscar una característica
 filas = soup_modelo.find_all("tr")
 print("\nTotal de filas HTML:", len(filas))
 
-palabras_clave = [
-    "Peso",
-    "Drop",
-    "Absorción de impactos en el talón",
-    "Retorno de energía",
-    "Pronación",
-    "Placa",
-    "rocker"
-]
+import re
+# Creamos un diccionario del Modelo para recuperar las metricas de los tenis en un formato extraible para Sheets
+
+datos_modelo = {
+   "modelo": "Nike Zoom Fly 6",
+   "url":modelo_url,
+   "peso_lab_g": None,
+   "peso_marca_g": None,
+   "drop_lab_mm": None,
+   "drop_marca_mm": None,
+   "absorcion_talon_sa": None,
+   "retorno_antepie_pct": None,
+   "tipo_placa": None,
+   "placa_carbono": None,
+   "rocker": None,
+   "pronacion": None
+}
+def extraer_numero(texto,patron):
+   coincidencia = re.search(patron,texto,re.IGNORECASE)
+   if coincidencia:
+      return float(coincidencia.group(1).replace(",","."))
+   return None
 
 def clasificar_placa(valor):
 
@@ -117,35 +131,67 @@ for fila in filas:
         for celda in celdas
     ]
 
-    if valores and any(
-       palabra.lower() in valores[0].lower()
-       for palabra in palabras_clave
-    ):
-       print("\nFila encontrada:", valores)
+    if len(valores) <2:
+       continue
+    etiqueta=valores[0].lower().strip()
+    valor=valores[1]
+
+    # Peso de laboratorio
+    if etiqueta == "peso":
+       peso = extraer_numero(valor, r"\((\d+(?:[.,]\d+)?)\s*g\)")
+       if peso is not None:
+           datos_modelo["peso_lab_g"] = peso
+
+    # Peso del fabricante
+    elif etiqueta == "peso:":
+       datos_modelo["peso_marca_g"] = extraer_numero(
+           valor, r"hombre:\s*[\d.,]+\s*oz\s*/\s*(\d+(?:[.,]\d+)?)\s*g"
+       )
+
+    # Drop de laboratorio
+    elif etiqueta == "drop":
+       datos_modelo["drop_lab_mm"] = extraer_numero(
+           valor, r"(\d+(?:[.,]\d+)?)\s*mm"
+       )
+    # Drop del fabricante
+    elif etiqueta == "drop:":
+       datos_modelo["drop_marca_mm"] = extraer_numero(
+           valor, r"(\d+(?:[.,]\d+)?)\s*mm"
+       )
+    # Absorción de impactos
+    elif etiqueta == "absorción de impactos en el talón":
+       datos_modelo["absorcion_talon_sa"] = extraer_numero(
+           valor, r"(\d+(?:[.,]\d+)?)\s*SA"
+       )
+    # Retorno de energía
+    elif etiqueta == "retorno de energía en el antepié":
+       datos_modelo["retorno_antepie_pct"] = extraer_numero(
+           valor, r"(\d+(?:[.,]\d+)?)\s*%"
+       )
+    # Pronación
+    elif etiqueta == "pronación:":
+       datos_modelo["pronacion"] = valor
+    # Placa
+    elif etiqueta == "placa":
+       tipo_placa, placa_carbono = clasificar_placa(valor)
+       datos_modelo["tipo_placa"] = tipo_placa
+       datos_modelo["placa_carbono"] = placa_carbono
+
+    # Rocker
+    elif etiqueta == "con rocker":
+       if valor.lower().strip() in ["✓", "✔", "sí", "si"]:
+           datos_modelo["rocker"] = 1
+
+       elif valor.lower().strip() in ["x", "✗", "✕", "no"]:
+           datos_modelo["rocker"] = 0
+
+
+# ==========================================
+# MOSTRAR RESULTADO
+# ==========================================
+
+print("\n--- DATOS DEL MODELO ---")
+
+for campo, valor in datos_modelo.items():
+    print(f"{campo}: {valor}")
        
-print("\n--- PLACA Y ROCKER---")
-for fila in soup_modelo.find_all("tr"):
-   celdas=fila.find_all(["th","td"])
-   valores=[
-      celda.get_text(" ",strip=True)
-      for celda in celdas
-   ]
-   if len(valores) >=2:
-      etiqueta=valores[0].lower().strip()
-      if etiqueta == "placa":
-         tipo_placa, placa_carbono = clasificar_placa(valores[1])
-         print("Tipo de placa:", tipo_placa)
-         print("Placa de carbono:",placa_carbono)
-      elif etiqueta =="con rocker":
-         valor_rocker = valores[1].lower().strip()
-
-         if valor_rocker in ["✓", "✔", "sí", "si"]:
-             rocker = 1
-
-         elif valor_rocker in ["x", "✗", "✕", "no"]:
-             rocker = 0
-
-         else:
-             rocker = None
-
-         print("Rocker:", rocker)
